@@ -17,6 +17,8 @@ $owner_icon = elgg_view_entity_icon($owner, 'tiny');
 $container = $bookmark->getContainerEntity();
 $categories = elgg_view('output/categories', $vars);
 
+$bits = parse_url($bookmark->address);
+
 $link = elgg_view('output/url', array('href' => $bookmark->address));
 $description = elgg_view('output/longtext', array('value' => $bookmark->description, 'class' => 'pbl'));
 
@@ -67,7 +69,12 @@ if ($full && !elgg_in_context('gallery')) {
 	$params = $params + $vars;
 	$summary = elgg_view('object/elements/summary', $params);
 
-	$bookmark_icon = elgg_view_icon('push-pin-alt');
+	$bookmark_icon = elgg_view('output/img', array(
+		'src' => "http://1.fvicon.com/{$bits['scheme']}://{$bits['host']}?canAudit=false", //http://a.fvicon.com/http://stackoverflow.com?canAudit=false
+		'width' => '16px',
+		'height' => '16px',
+		'class' => 'mrs favicon'
+	));
 	$body = <<<HTML
 <div class="bookmark elgg-content mts">
 	$bookmark_icon<span class="elgg-heading-basic mbs">$link</span>
@@ -98,13 +105,10 @@ HTML;
 		$excerpt = " - $excerpt";
 	}
 
-	if (strlen($url) > 25) {
-		$bits = parse_url($url);
-		if (isset($bits['host'])) {
-			$display_text = $bits['host'];
-		} else {
-			$display_text = elgg_get_excerpt($url, 100);
-		}
+	if (isset($bits['host'])) {
+		$display_text = $bits['host'];
+	} else {
+		$display_text = elgg_get_excerpt($url, 100);
 	}
 
 	$link = elgg_view('output/url', array(
@@ -112,7 +116,12 @@ HTML;
 		'text' => $display_text,
 	));
 
-	$content = elgg_view_icon('push-pin-alt') . "$link{$excerpt}";
+	$content = elgg_view('output/img', array(
+		'src' => "http://1.fvicon.com/{$bits['scheme']}://{$bits['host']}?canAudit=false", //http://a.fvicon.com/http://stackoverflow.com?canAudit=false
+		'width' => '16px',
+		'height' => '16px',
+		'class' => 'mrs favicon'
+	)) . "$link{$excerpt}";
 
 	$params = array(
 		'entity' => $bookmark,
