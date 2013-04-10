@@ -21,14 +21,6 @@ function bookmarks_init() {
 	elgg_register_action('bookmarks/delete', "$action_path/delete.php");
 	elgg_register_action('bookmarks/share', "$action_path/share.php");
 
-	// menus
-	elgg_register_menu_item('site', array(
-		'name' => 'bookmarks',
-		'text' => elgg_echo('bookmarks'),
-		'href' => 'bookmarks/all'
-	));
-
-	elgg_register_plugin_hook_handler('register', 'menu:page', 'bookmarks_page_menu');
 	elgg_register_plugin_hook_handler('register', 'menu:owner_block', 'bookmarks_owner_block_menu');
 
 	elgg_register_page_handler('bookmarks', 'bookmarks_page_handler');
@@ -95,20 +87,6 @@ function bookmarks_page_handler($page) {
 
 	elgg_push_breadcrumb(elgg_echo('bookmarks'), 'bookmarks/all');
 
-	// old group usernames
-	if (substr_count($page[0], 'group:')) {
-		preg_match('/group\:([0-9]+)/i', $page[0], $matches);
-		$guid = $matches[1];
-		if ($entity = get_entity($guid)) {
-			bookmarks_url_forwarder($page);
-		}
-	}
-
-	// user usernames
-	$user = get_user_by_username($page[0]);
-	if ($user) {
-		bookmarks_url_forwarder($page);
-	}
 
 	$pages = dirname(__FILE__) . '/pages/bookmarks';
 
@@ -150,11 +128,6 @@ function bookmarks_page_handler($page) {
 			include "$pages/owner.php";
 			break;
 
-		case "bookmarklet":
-			set_input('container_guid', $page[1]);
-			include "$pages/bookmarklet.php";
-			break;
-
 		default:
 			return false;
 	}
@@ -163,42 +136,6 @@ function bookmarks_page_handler($page) {
 	return true;
 }
 
-/**
- * Forward to the new style of URLs
- *
- * @param string $page
- */
-function bookmarks_url_forwarder($page) {
-	global $CONFIG;
-
-	if (!isset($page[1])) {
-		$page[1] = 'items';
-	}
-
-	switch ($page[1]) {
-		case "read":
-			$url = "{$CONFIG->wwwroot}bookmarks/view/{$page[2]}/{$page[3]}";
-			break;
-		case "inbox":
-			$url = "{$CONFIG->wwwroot}bookmarks/inbox/{$page[0]}";
-			break;
-		case "friends":
-			$url = "{$CONFIG->wwwroot}bookmarks/friends/{$page[0]}";
-			break;
-		case "add":
-			$url = "{$CONFIG->wwwroot}bookmarks/add/{$page[0]}";
-			break;
-		case "items":
-			$url = "{$CONFIG->wwwroot}bookmarks/owner/{$page[0]}";
-			break;
-		case "bookmarklet":
-			$url = "{$CONFIG->wwwroot}bookmarks/bookmarklet/{$page[0]}";
-			break;
-	}
-
-	register_error(elgg_echo("changebookmark"));
-	forward($url);
-}
 
 /**
  * Populates the ->getUrl() method for bookmarked objects
@@ -264,34 +201,4 @@ function bookmarks_notify_message($hook, $entity_type, $returnvalue, $params) {
 		));
 	}
 	return null;
-}
-
-/**
- * Add a page menu menu.
- *
- * @param string $hook
- * @param string $type
- * @param array  $return
- * @param array  $params
- */
-function bookmarks_page_menu($hook, $type, $return, $params) {
-	if (elgg_is_logged_in()) {
-		// only show bookmarklet in bookmark pages
-		if (elgg_in_context('bookmarks')) {
-			$page_owner = elgg_get_page_owner_entity();
-			if (!$page_owner) {
-				$page_owner = elgg_get_logged_in_user_entity();
-			}
-			
-			if ($page_owner instanceof ElggGroup) {
-				$title = elgg_echo('bookmarks:bookmarklet:group');
-			} else {
-				$title = elgg_echo('bookmarks:bookmarklet');
-			}
-
-			$return[] = new ElggMenuItem('bookmarklet', $title, 'bookmarks/bookmarklet/' . $page_owner->getGUID());
-		}
-	}
-
-	return $return;
 }

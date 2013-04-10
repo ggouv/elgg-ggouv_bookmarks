@@ -16,8 +16,6 @@ $english = array(
 	'bookmarks:everyone' => "All site bookmarks",
 	'bookmarks:this' => "Bookmark this page",
 	'bookmarks:this:group' => "Bookmark in %s",
-	'bookmarks:bookmarklet' => "Get bookmarklet",
-	'bookmarks:bookmarklet:group' => "Get group bookmarklet",
 	'bookmarks:inbox' => "Bookmarks inbox",
 	'bookmarks:morebookmarks' => "More bookmarks",
 	'bookmarks:more' => "More",
@@ -62,15 +60,6 @@ View and comment on the new bookmark:
 	 * Widget and bookmarklet
 	 */
 	'bookmarks:widget:description' => "Display your latest bookmarks.",
-
-	'bookmarks:bookmarklet:description' =>
-			"The bookmarks bookmarklet allows you to share any resource you find on the web with your friends, or just bookmark it for yourself. To use it, simply drag the following button to your browser's links bar:",
-
-	'bookmarks:bookmarklet:descriptionie' =>
-			"If you are using Internet Explorer, you will need to right click on the bookmarklet icon, select 'add to favorites', and then the Links bar.",
-
-	'bookmarks:bookmarklet:description:conclusion' =>
-			"You can then save any page you visit by clicking it at any time.",
 
 	/**
 	 * Status messages
