@@ -18,9 +18,59 @@ $container = $bookmark->getContainerEntity();
 $categories = elgg_view('output/categories', $vars);
 
 $bits = parse_url($bookmark->address);
+$site = $bits['scheme'] . '://' . $bits['host'];
 
-$link = elgg_view('output/url', array('href' => $bookmark->address));
-$description = elgg_view('output/longtext', array('value' => $bookmark->description, 'class' => 'pbl'));
+$link = elgg_view('output/url', array(
+	'href' => $bookmark->address,
+	'target' => '_blank'
+));
+$description = elgg_view('output/longtext', array('value' => $bookmark->description, 'class' => ''));
+
+/*$marked_this_bookmark = elgg_get_entities_from_metadata(array(
+	'type' => 'object',
+	'subtype' => 'bookmarks',
+	'metadata_name' => 'address',
+	'metadata_value' => $bookmark->address,
+));*/
+$site_sql_string = sanitise_string($site);
+$similar_bookmarks = elgg_get_entities_from_metadata(array(
+	'type' => 'object',
+	'subtype' => 'bookmarks',
+	'joins' => array(
+		'JOIN ggouvfr_metadata n_table on e.guid = n_table.entity_guid',
+		'JOIN ggouvfr_metastrings msn on n_table.name_id = msn.id',
+		'JOIN ggouvfr_metastrings msv on n_table.value_id = msv.id'
+	),
+	'wheres' => array(
+		"(msn.string IN ('address'))",
+		"(msv.string LIKE '$site%')"
+	)
+));
+/*$same_bookmark = 
+foreach ($similar_bookmarks as $key => $b) {
+	if ($b->guid == $bookmarks->getGUID()) unset($similar_bookmarks[$key]);
+	if ($b->address == $bookmarks->adrress) 
+}*/
+
+$infos = elgg_view('output/url', array(
+	'text' => elgg_echo('bookmarks:bookmarks_of_this_site'),
+	'href' => "bookmarks/site/{$site}",
+	'is_trusted' => true
+));
+
+if (function_exists('markdown_wiki_parse_link')) { // special for ggouv
+	elgg_load_library('markdown_wiki:utilities');
+	$echo = elgg_echo('bookmarks:wiki_of_this_site', array($site));
+	$infos .= '<br/>';
+	if ( $page_guid = search_markdown_wiki_by_title($site, 98881) ) { // page exists
+		$page = get_entity($page_guid);
+		$infos .= "<a href='{$page->getUrl()}'>{$echo}</a>";
+	} else { // page doesn't exists
+		$site_url = elgg_get_site_url();
+		$tooltip = elgg_echo('markdown_wiki:create');
+		$infos .= "<a href='{$site_url}wiki/search?container_guid=98881&q={$site}' class='tooltip s new' title=\"{$tooltip}\">{$echo}</a>";
+	}
+}
 
 $owner_link = elgg_view('output/url', array(
 	'href' => "bookmarks/owner/$owner->username",
@@ -38,7 +88,7 @@ if ($comments_count != 0) {
 	$comments_link = elgg_view('output/url', array(
 		'href' => $bookmark->getURL() . '#comments',
 		'text' => $text,
-		'is_trusted' => true,
+		'is_trusted' => true
 	));
 } else {
 	$comments_link = '';
@@ -69,15 +119,17 @@ if ($full && !elgg_in_context('gallery')) {
 	$params = $params + $vars;
 	$summary = elgg_view('object/elements/summary', $params);
 
+	$description ='<div>' . $description . '</div><div class="elgg-heading-basic markdown-body pam mtm">' . $infos . '</div>';
+
 	$bookmark_icon = elgg_view('output/img', array(
-		'src' => "http://1.fvicon.com/{$bits['scheme']}://{$bits['host']}?canAudit=false", //http://a.fvicon.com/http://stackoverflow.com?canAudit=false
+		'src' => "https://plus.google.com/_/favicon?domain={$bits['scheme']}://{$bits['host']}?canAudit=false", //http://a.fvicon.com/http://stackoverflow.com?canAudit=false
 		'width' => '16px',
 		'height' => '16px',
 		'class' => 'mrs favicon'
 	));
 	$body = <<<HTML
 <div class="bookmark elgg-content mts">
-	$bookmark_icon<span class="elgg-heading-basic mbs">$link</span>
+	$bookmark_icon<span class="mbs">$link</span>
 	$description
 </div>
 HTML;
@@ -112,12 +164,13 @@ HTML;
 	}
 
 	$link = elgg_view('output/url', array(
-		'href' => $bookmark->address,
+		'href' => $url,
 		'text' => $display_text,
+		'target' => '_blank'
 	));
 
 	$content = elgg_view('output/img', array(
-		'src' => "http://1.fvicon.com/{$bits['scheme']}://{$bits['host']}?canAudit=false", //http://a.fvicon.com/http://stackoverflow.com?canAudit=false
+		'src' => "https://plus.google.com/_/favicon?domain={$bits['scheme']}://{$bits['host']}?canAudit=false", //http://a.fvicon.com/http://stackoverflow.com?canAudit=false
 		'width' => '16px',
 		'height' => '16px',
 		'class' => 'mrs favicon'

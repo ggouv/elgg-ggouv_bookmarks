@@ -56,6 +56,8 @@ View and comment on the new bookmark:
 
 	'bookmarks:no_title' => 'No title',
 
+	'bookmarks:bookmarks_of_this_site' => "All bookmarks about this site",
+
 	/**
 	 * Widget and bookmarklet
 	 */

@@ -18,7 +18,7 @@ $content .= elgg_list_entities(array(
 	'type' => 'object',
 	'subtype' => 'bookmarks',
 	'container_guid' => $page_owner->guid,
-	'limit' => 10,
+	'limit' => 50,
 	'full_view' => false,
 	'view_toggle_type' => false
 ));
@@ -39,6 +39,7 @@ $vars = array(
 	'content' => $content,
 	'title' => $title,
 	'sidebar' => elgg_view('bookmarks/sidebar'),
+	'sidebar_2' => '<div class="mtl">' . elgg_view('bookmarks/sidebar_2'). '</div>',
 );
 
 // don't show filter if out of filter context
@@ -46,6 +47,6 @@ if ($page_owner instanceof ElggGroup) {
 	$vars['filter'] = false;
 }
 
-$body = elgg_view_layout('content', $vars);
+$body = elgg_view_layout('content_two_right_sidebars', $vars);
 
 echo elgg_view_page($title, $body);

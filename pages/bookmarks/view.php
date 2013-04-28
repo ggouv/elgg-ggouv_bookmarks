@@ -27,12 +27,19 @@ $title = $bookmark->title;
 elgg_push_breadcrumb($title);
 
 $content = elgg_view_entity($bookmark, array('full_view' => true));
-$content .= elgg_view_comments($bookmark);
+$content .= elgg_view_comments($bookmark, true, array('preview' => 'toggle'));
 
-$body = elgg_view_layout('content', array(
-	'content' => $content,
-	'title' => $title,
+$body = elgg_view_layout('one_column', array(
+	'content' => '<div class="elgg-head clearfix">' . elgg_view_title($title, array('class' => 'elgg-heading-main')) . '</div>' . $content,
 	'filter' => '',
 ));
+
+$body = '<div class="row-fluid"><div class="span4">' . $body . '</div>';
+$body .= '<div class="span8 iframe-fixed">' . elgg_view('output/iframe', array(
+										'src' => $bookmark->address,
+										'class' => 'bookmark-iframe',
+										'width' => '100%',
+										'frameborder' => '0'
+									)) . '</div></div>';
 
 echo elgg_view_page($title, $body);
