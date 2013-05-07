@@ -32,7 +32,7 @@ $description = elgg_view('output/longtext', array('value' => $bookmark->descript
 	'metadata_name' => 'address',
 	'metadata_value' => $bookmark->address,
 ));*/
-$site_sql_string = sanitise_string($site);
+/*$site_sql_string = sanitise_string($site);
 $similar_bookmarks = elgg_get_entities_from_metadata(array(
 	'type' => 'object',
 	'subtype' => 'bookmarks',

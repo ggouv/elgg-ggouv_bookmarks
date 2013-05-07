@@ -14,14 +14,16 @@ elgg_push_breadcrumb($site);
 
 elgg_register_title_button();
 
+global $CONFIG;
+
 $site_sql_string = sanitise_string($site);
 $content = elgg_list_entities_from_metadata(array(
 	'type' => 'object',
 	'subtype' => 'bookmarks',
 	'joins' => array(
-		'JOIN ggouvfr_metadata n_table on e.guid = n_table.entity_guid',
-		'JOIN ggouvfr_metastrings msn on n_table.name_id = msn.id',
-		'JOIN ggouvfr_metastrings msv on n_table.value_id = msv.id'
+		"JOIN {$CONFIG->dbprefix}fr_metadata n_table on e.guid = n_table.entity_guid",
+		"JOIN {$CONFIG->dbprefix}fr_metastrings msn on n_table.name_id = msn.id",
+		"JOIN {$CONFIG->dbprefix}fr_metastrings msv on n_table.value_id = msv.id"
 	),
 	'wheres' => array(
 		"(msn.string IN ('address'))",
