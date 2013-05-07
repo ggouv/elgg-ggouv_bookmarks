@@ -44,7 +44,7 @@ $french = array(
 
 	'bookmarks:no_title' => "Pas de titre",
 
-	'bookmarks:bookmarks_of_this_site' => "Tous les marque-pages sur ce site",
+	'bookmarks:bookmarks_of_this_site' => "Tous les marque-pages sur %s",
 
 	/**
 	* Widget and bookmarklet

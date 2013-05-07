@@ -70,7 +70,7 @@ function bookmarks_init() {
  *  New bookmark:         bookmarks/add/<guid> (container: user, group, parent)
  *  Edit bookmark:        bookmarks/edit/<guid>
  *  Group bookmarks:      bookmarks/group/<guid>/all
- *  Bookmarklet:          bookmarks/bookmarklet/<guid> (user)
+ *  Site:                 bookmarks/site/URL url of the site
  *
  * Title is ignored
  *
@@ -124,6 +124,11 @@ function bookmarks_page_handler($page) {
 			include "$pages/owner.php";
 			break;
 
+		case 'site':
+			set_input('site', $page[1]);
+			include "$pages/site.php";
+			break;
+
 		default:
 			return false;
 	}
@@ -149,7 +154,7 @@ function bookmark_url($entity) {
 
 /**
  * Add a menu item to an ownerblock
- * 
+ *
  * @param string $hook
  * @param string $type
  * @param array  $return

@@ -46,30 +46,24 @@ $similar_bookmarks = elgg_get_entities_from_metadata(array(
 		"(msv.string LIKE '$site%')"
 	)
 ));
-/*$same_bookmark = 
+//global $fb; $fb->info($similar_bookmarks);
+/*$same_bookmark =
 foreach ($similar_bookmarks as $key => $b) {
 	if ($b->guid == $bookmarks->getGUID()) unset($similar_bookmarks[$key]);
-	if ($b->address == $bookmarks->adrress) 
+	if ($b->address == $bookmarks->adrress)
 }*/
 
 $infos = elgg_view('output/url', array(
-	'text' => elgg_echo('bookmarks:bookmarks_of_this_site'),
-	'href' => "bookmarks/site/{$site}",
+	'text' => elgg_echo('bookmarks:bookmarks_of_this_site', array($bits['host'])),
+	'href' => "bookmarks/site/{$bits['host']}",
 	'is_trusted' => true
 ));
 
 if (function_exists('markdown_wiki_parse_link')) { // special for ggouv
-	elgg_load_library('markdown_wiki:utilities');
-	$echo = elgg_echo('bookmarks:wiki_of_this_site', array($site));
-	$infos .= '<br/>';
-	if ( $page_guid = search_markdown_wiki_by_title($site, 98881) ) { // page exists
-		$page = get_entity($page_guid);
-		$infos .= "<a href='{$page->getUrl()}'>{$echo}</a>";
-	} else { // page doesn't exists
-		$site_url = elgg_get_site_url();
-		$tooltip = elgg_echo('markdown_wiki:create');
-		$infos .= "<a href='{$site_url}wiki/search?container_guid=98881&q={$site}' class='tooltip s new' title=\"{$tooltip}\">{$echo}</a>";
-	}
+	$echo = elgg_echo('bookmarks:wiki_of_this_site', array($bits['host']));
+	$infos .= '<br/>' . elgg_view('output/longtext', array(
+		'value' => "[{$echo}](site:{$bits['host']})"
+	));
 }
 
 $owner_link = elgg_view('output/url', array(
@@ -184,6 +178,6 @@ HTML;
 	);
 	$params = $params + $vars;
 	$body = elgg_view('object/elements/summary', $params);
-	
+
 	echo elgg_view_image_block($owner_icon, $body);
 }
